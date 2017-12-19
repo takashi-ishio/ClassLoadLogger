@@ -39,29 +39,31 @@ public class Agent {
 				public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined,
 						ProtectionDomain protectionDomain, byte[] classfileBuffer) throws IllegalClassFormatException {
 					StringBuilder builder = new StringBuilder();
-					CodeSource s = protectionDomain.getCodeSource();
-					if (s != null) {
-						URL l = s.getLocation();
-						builder.append(l.toExternalForm());
-					} else {
-						builder.append("(Unknown Source)");
-					}
-					builder.append(",");
-					builder.append(className);
-					builder.append(",");
-					byte[] hash = getHash(classfileBuffer);
-					for (byte b: hash) {
-						builder.append(String.format("%02x", b));
-					}
-					String info = builder.toString();
 					
-					if (writer != null) {
-						writer.println(info);
-					} else {
-						System.err.println(info);
+					if (protectionDomain != null) {
+						CodeSource s = protectionDomain.getCodeSource();
+						if (s != null) {
+							URL l = s.getLocation();
+							builder.append(l.toExternalForm());
+						} else {
+							builder.append("(Unknown Source)");
+						}
+						builder.append(",");
+						builder.append(className);
+						builder.append(",");
+						byte[] hash = getHash(classfileBuffer);
+						for (byte b: hash) {
+							builder.append(String.format("%02x", b));
+						}
+						String info = builder.toString();
+						
+						if (writer != null) {
+							writer.println(info);
+						} else {
+							System.err.println(info);
+						}
 					}
-					
-					return classfileBuffer;
+					return null;
 				}
 			});
 
